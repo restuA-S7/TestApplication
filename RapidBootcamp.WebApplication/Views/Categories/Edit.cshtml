@@ -1,0 +1,20 @@
+﻿@model RapidBootcamp.WebApplication.Models.Category;
+
+<html>
+<head>
+    <title>Edit Category</title>
+</head>
+<body>
+    <h2>Edit Category</h2>
+    <form method="post" action="/Categories/Edit">
+        <input type="hidden" value="@Model.CategoryId" name="CategoryId" />
+        <div>
+            <label for="CategoryName">Category Name:</label>
+            <input type="text" value="@Model.CategoryName" name="CategoryName" />
+        </div>
+        <div>
+            <input type="submit" value="Edit" />
+        </div>
+    </form>
+</body>
+</html>

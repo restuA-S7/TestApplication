@@ -1,0 +1,18 @@
+﻿@model RapidBootcamp.WebApplication.Models.Category
+
+
+<html>
+<head>
+    <title>Delete Category</title>
+</head>
+<body>
+    <h2>Delete Category</h2>
+    <form method="post" action="/Categories/Delete">
+        <p>Apakah anda yakin akan mendelete category @Model.CategoryName ?</p>
+        <input type="hidden" value="@Model.CategoryId" name="CategoryId" />
+        <div>
+            <input type="submit" value="Delete" />
+        </div>
+    </form>
+</body>
+</html>
