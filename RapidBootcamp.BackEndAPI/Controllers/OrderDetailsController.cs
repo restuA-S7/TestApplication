@@ -29,7 +29,7 @@ namespace RapidBootcamp.BackEndAPI.Controllers
             var result = _orderDetail.GetDetailsByHeaderId(orderHeaderId);
             return result;
         }
-        //sss
+        
 
         // POST api/<OrderDetailsController>
         [HttpPost]
