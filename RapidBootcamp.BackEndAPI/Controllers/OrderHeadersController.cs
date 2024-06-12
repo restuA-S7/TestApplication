@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using RapidBootcamp.BackEndAPI.DAL;
+using RapidBootcamp.BackEndAPI.DTO;
 using RapidBootcamp.BackEndAPI.Models;
 using RapidBootcamp.BackEndAPI.ViewModels;
 
@@ -12,22 +14,56 @@ namespace RapidBootcamp.BackEndAPI.Controllers
     public class OrderHeadersController : ControllerBase
     {
         private readonly IOrderHeader _orderHeader; //dependensi injection
-        private readonly IOrderDetail _orderDetail;
-        public OrderHeadersController(IOrderHeader orderHeader, IOrderDetail orderDetail)
+        //private readonly IOrderDetail _orderDetail;
+        public OrderHeadersController(IOrderHeader orderHeader)
         {
             _orderHeader = orderHeader;
-            _orderDetail = orderDetail;
+            //_orderDetail = orderDetail;
         }
         // GET: api/<OrderHeadersController>
         [HttpGet]
-        public IEnumerable<OrderHeader> Get()
+        public IEnumerable<OrderHeaderDTO> Get()
         {
+            
+            List<OrderHeaderDTO> hasil = new List<OrderHeaderDTO>();
             var results = _orderHeader.GetAll();
-            foreach(var item in results)
+            foreach (var item in results)
             {
-                item.OrderDetails = _orderDetail.GetDetailsByHeaderId(item.OrderHeaderId);
+                OrderHeaderDTO orderHeaderDTO = new OrderHeaderDTO
+                {
+                    WalletId = item.WalletId,
+                    TransactionDate = item.TransactionDate,
+                    OrderHeaderId = item.OrderHeaderId,
+                    CustomerName = item.Wallet.Customer.CustomerName,
+                    WalletName = item.Wallet.WalletType.WalletName,
+                    Saldo = item.Wallet.Saldo
+                };
+                // hasil.Add(orderHeaderDTO);
+
+                List<OrderDetailDTO> details = new List<OrderDetailDTO>();
+                foreach (var detail in item.OrderDetails)
+                {
+                    OrderDetailDTO orderDetailDTO = new OrderDetailDTO
+                    {
+                        OrderDetailId = detail.OrderDetailId,
+                        ProductId = detail.ProductId,
+                        ProductName = detail.Product.ProductName,
+                        CategoryName = detail.Product.Category.CategoryName,
+                        Qty = detail.Qty,
+                        Price = detail.Price
+                    }; 
+                    details.Add(orderDetailDTO);
+                }
+                
+                orderHeaderDTO.OrderDetails = details;
+
+                hasil.Add(orderHeaderDTO);
             }
-            return results;
+            //foreach(var item in results)
+            //{
+            //    item.OrderDetails = _orderDetail.GetDetailsByHeaderId(item.OrderHeaderId);
+            //}
+            return hasil;
         }
 
         [HttpGet("View")]

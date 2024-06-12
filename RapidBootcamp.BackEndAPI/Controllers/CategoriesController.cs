@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RapidBootcamp.BackEndAPI.DAL;
+using RapidBootcamp.BackEndAPI.DTO;
 using RapidBootcamp.BackEndAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -17,27 +18,53 @@ namespace RapidBootcamp.BackEndAPI.Controllers
         {
             _category = category;
         }
-        // GET: api/<CategoriesController>
-        [HttpGet] //metodnya ini ditulis
-        public IEnumerable<Category> Get()
+
+        [HttpGet]
+        public IEnumerable<CategoryDTO> Get()
         {
-            //List<Category> categories = new List<Category>()
-            //{
-            //    new Category {CategoryId = 1, CategoryName="Laptop Gaming"},
-            //    new Category {CategoryId = 2, CategoryName="Laptop Bussines"}
-            //};
+            List<CategoryDTO> categoryDTOs = new List<CategoryDTO>();
             var categories = _category.GetAll();
-            return categories; // kalau di sini ini jadinya otomatiss inikan tipenya listof cateogory tapi langsung dijadikan jason
-            //return new string[] { "value1", "value2" };
+
+            foreach(var category in categories)
+            {
+                CategoryDTO categoryDTO = new CategoryDTO
+                {
+                    CategoryId = category.CategoryId,
+                    CategoryName = category.CategoryName
+                };
+                categoryDTOs.Add(categoryDTO);
+            }
+            return categoryDTOs;
         }
+
+        // GET: api/<CategoriesController>
+        //[HttpGet] //metodnya ini ditulis
+        //public IEnumerable<Category> Get()
+        //{
+        //    List<Category> categories = new List<Category>()
+        //    {
+        //        new Category {CategoryId = 1, CategoryName="Laptop Gaming"},
+        //        new Category {CategoryId = 2, CategoryName="Laptop Bussines"}
+        //    };
+        //    var categories = _category.GetAll();
+        //    return categories; // kalau di sini ini jadinya otomatiss inikan tipenya listof cateogory tapi langsung dijadikan jason
+        //    return new string[] { "value1", "value2" };
+        //}
         //jadi dari list categoyr diconversi jadi jason makanya IEnumirabel
 
         // GET api/<CategoriesController>/5
         [HttpGet("{id}")] //ini ada kurung kurwal karen ada inputnya
-        public Category Get(int id) // ini di rubah cadi Category dari string Get ke Category
+        public CategoryDTO Get(int id) // ini di rubah cadi Category dari string Get ke Category
         {
             var category = _category.GetById(id);
-            return category;
+            CategoryDTO categoryDTO = new CategoryDTO
+            {
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName
+            };
+            return categoryDTO;
+            //var category = _category.GetById(id);
+            //return category;
         }
 
         //kika bisa kustem httpgetnya untuk tertentu gunannya custom itu untuk supaya gak bingung soalnya httpGet all itu sudah sempat dipakai
@@ -53,16 +80,42 @@ namespace RapidBootcamp.BackEndAPI.Controllers
         }
 
         // POST api/<CategoriesController>
-        [HttpPost]
+        //[HttpPost]
         //public void Post([FromBody] string value) //FromBody itu boleh dimasukan boleh engga soalnya by default udah from body
-        public IActionResult Post(Category category) //returnnya bisa tambil hhtp status gitu, http status 404 not found dll. ini untuk memudahkan nantinya developer frontend
+        //public IActionResult Post(Category category) //returnnya bisa tambil hhtp status gitu, http status 404 not found dll. ini untuk memudahkan nantinya developer frontend
+        //{
+        //    try
+        //    {
+        //        var result = _category.Add(category);
+        //        return Ok(result); atau
+        //        return CreatedAtAction(nameof(Get),
+        //            new { id = category.CategoryId }, category);// bisa juaga pakai langsung masukan Getnya nameof biar gak typo
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
+
+        [HttpPost]
+        public ActionResult Post(CreateCategoryDto createCategoryDto)
         {
             try
             {
+                Category category = new Category
+                {
+                    CategoryName = createCategoryDto.CategoryName
+                };
                 var result = _category.Add(category);
-                //return Ok(result); atau
-                return CreatedAtAction(nameof(Get), 
-                    new { id = category.CategoryId }, category);// bisa juaga pakai langsung masukan Getnya nameof biar gak typo
+
+                CategoryDTO categoryDTO = new CategoryDTO
+                {
+                    CategoryId = category.CategoryId,
+                    CategoryName = createCategoryDto.CategoryName
+                };
+                return CreatedAtAction(nameof(Get),
+                    new { id = category.CategoryId }, categoryDTO);
             }
             catch (Exception ex)
             {
@@ -70,7 +123,6 @@ namespace RapidBootcamp.BackEndAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
 
         // PUT api/<CategoriesController>/5
         [HttpPut("{id}")]
