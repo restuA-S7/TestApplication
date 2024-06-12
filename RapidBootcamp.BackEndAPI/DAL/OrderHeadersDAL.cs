@@ -1,6 +1,7 @@
 ﻿using RapidBootcamp.BackEndAPI.Models;
 using RapidBootcamp.BackEndAPI.ViewModels;
 using System.Data.SqlClient;
+using System.Transactions;
 
 namespace RapidBootcamp.BackEndAPI.DAL
 {
@@ -8,35 +9,51 @@ namespace RapidBootcamp.BackEndAPI.DAL
     {
         private string? _connectionString;
         private readonly IConfiguration _config;
+        private readonly IOrderDetail _orderDetail;
+        private readonly IWallet _wallet;
         private SqlConnection _connection;
         private SqlCommand _command;
         private SqlDataReader _reader;
-        public OrderHeadersDAL(IConfiguration config)
+        public OrderHeadersDAL(IConfiguration config, IOrderDetail orderDetail, IWallet wallet)
         {
             _config = config;
+            _orderDetail = orderDetail;
+            _wallet = wallet;
             _connectionString = _config.GetConnectionString("DefaultConnection");
             _connection = new SqlConnection(_connectionString);
         }
         public OrderHeader Add(OrderHeader entity)
         {
-             //ambil lastOrderHeaderId
-                //string lastOrderHeaderId = GetOrderLastHeaderId();
-                //lastOrderHeaderId = lastOrderHeaderId.Substring(4, 4);
-                //int newOrderHeaderId = Convert.ToInt32(lastOrderHeaderId) + 1;
-                //string newOrderHeaderInString = "INV-" + newOrderHeaderId.ToString().PadLeft(4, '0');
+            //ambil lastOrderHeaderId
+            //string lastOrderHeaderId = GetOrderLastHeaderId();
+            //lastOrderHeaderId = lastOrderHeaderId.Substring(4, 4);
+            //int newOrderHeaderId = Convert.ToInt32(lastOrderHeaderId) + 1;
+            //string newOrderHeaderInString = "INV-" + newOrderHeaderId.ToString().PadLeft(4, '0');
 
-                //var newOrderHeader = new OrderHeader
-                //{
-                //    OrderHeaderId = newOrderHeaderInString
-                //};
+            //var newOrderHeader = new OrderHeader
+            //{
+            //    OrderHeaderId = newOrderHeaderInString
+            //};
 
-                //buat hal di atas masukan ke kontroler
+            //buat hal di atas masukan ke kontroler
 
-                //return newOrderHeader;
-
-               
+            //return newOrderHeader;
+            TransactionManager.ImplicitDistributedTransactions = true;
+            using (TransactionScope scope = new TransactionScope())
+            {
                 try
                 {
+                    //ambil last orderheaderid terus buat nomer order header
+                    string lastOrderHeaderId = GetOrderLastHeaderId();
+
+                    lastOrderHeaderId = lastOrderHeaderId.Substring(4, 4);
+                    int newOrderHeaderId = Convert.ToInt32(lastOrderHeaderId) + 1;
+                    string newOrderHeaderIdString = "INV-" + newOrderHeaderId.ToString().PadLeft(4, '0');
+
+
+                    entity.OrderHeaderId = newOrderHeaderIdString;
+
+
                     string query = @"insert into OrderHeaders (OrderHeaderId, WalletId) 
                                  values (@OrderHeaderId, @WalletId)";
                     _command = new SqlCommand(query, _connection);
@@ -46,13 +63,48 @@ namespace RapidBootcamp.BackEndAPI.DAL
                     _command.ExecuteNonQuery(); //ini karena gak ada return value kalau pakai execute scalar itu ada return valuenya kalau peritnah insert aja tanpa return baru pakai itu
                                                 //kalau kembalianya satu tabel ya pakai data reader
 
+                    //tambah item detail product yang dijual
+                    foreach (var item in entity.OrderDetails)
+                    {
+                        item.OrderHeaderId = newOrderHeaderIdString;
+                        _orderDetail.Add(item);
+                    }
+
+                    //cek wallet saldo
+                    decimal saldo = _wallet.GetWalletSaldo(entity.WalletId);
+                    //decimal total = entity.OrderDetails(e => e.) lupa cara satunya
+                    decimal total = _orderDetail.GetTotalAmount(newOrderHeaderIdString);
+                    if (saldo < total)
+                    {
+                        throw new ArgumentException("saldo tidak mencukupi");
+                    }
+                    //update saldo wallet
+                    saldo -= total; // atau saldo = saldo - total;
+                    _wallet.UpdateWalletSaldo(entity.WalletId, saldo);
+
+                    scope.Complete();
                     return entity;
+                }
+                catch (TransactionException transEx)
+                {
+                    throw new ArgumentException(transEx.Message);
                 }
                 catch (SqlException sqlEx)
                 {
                     throw new ArgumentException(sqlEx.Message);
                 }
+                catch (Exception ex)
+                {
+                    throw new ArgumentException(ex.Message);
+                }
+                finally
+                {
+                    scope.Dispose();
+                    _command.Dispose();
+                    _connection.Close();
+                }
             }
+        }
 
         public void Delete(int id)
         {

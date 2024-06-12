@@ -22,8 +22,9 @@ namespace RapidBootcamp.BackEndAPI.DAL
         }
         public OrderDetail Add(OrderDetail entity)
         {
-            using(TransactionScope scope = new TransactionScope()) //tansaction scope itu untuk memastikan dua/lebih eksekusi itu bener2 dijalankan dulu kalau engga di kembalikan
-            {
+            //transaction scope disini gak jadi udah di order header dal
+            //using(TransactionScope scope = new TransactionScope()) //tansaction scope itu untuk memastikan dua/lebih eksekusi itu bener2 dijalankan dulu kalau engga di kembalikan
+            //{
                 //cara panggil ini di api order header ya sekalian dan pakainya ini
                 /*{
                     "orderHeaderId": "",
@@ -66,7 +67,7 @@ namespace RapidBootcamp.BackEndAPI.DAL
                     cmdUpdate.Parameters.AddWithValue("@ProductId", entity.ProductId);
                     cmdUpdate.ExecuteNonQuery();
 
-                    scope.Complete();
+                    //scope.Complete();
 
                     return entity;
                 }
@@ -74,17 +75,17 @@ namespace RapidBootcamp.BackEndAPI.DAL
                 {
                     throw new ArgumentException(sqlEx.Message);
                 }
-                catch (TransactionAbortedException tranEx)
-                {
-                    throw new ArgumentException(tranEx.Message);
-                }
+                //catch (TransactionAbortedException tranEx)
+                //{
+                //    throw new ArgumentException(tranEx.Message);
+                //}
                 finally
                 {
-                    _command.Dispose();
+                    //_command.Dispose(); ini dimatikan karena kalau engga stock is not enaughnya gak aktif
                     _connection.Close();
-                    scope.Dispose();
+                    //scope.Dispose();
                 }
-            } 
+            //} 
         }
 
         public void Delete(int id)
@@ -160,7 +161,7 @@ namespace RapidBootcamp.BackEndAPI.DAL
                 string query = @"select sum(Price * Qty) from OrderDetails
                                 where OrderHeaderId = @OrderHeaderId";
                 _command = new SqlCommand(query, _connection);
-                _command.Parameters.AddWithValue("OrderHeadeId", orderHeaderId);
+                _command.Parameters.AddWithValue("OrderHeaderId", orderHeaderId);
                 _connection.Open();
                 decimal totalAmount = Convert.ToDecimal(_command.ExecuteScalar());
                 return totalAmount;
@@ -170,11 +171,12 @@ namespace RapidBootcamp.BackEndAPI.DAL
 
                 throw new ArgumentException(sqlEx.Message); 
             }
-            finally
-            {
-                _command.Dispose();
-                _connection.Close();
-            }
+            //bapak ini dimatikan
+            //finally
+            //{
+            //    _command.Dispose();
+            //    _connection.Close();
+            //}
         }
     }
 }

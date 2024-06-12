@@ -51,22 +51,22 @@ namespace RapidBootcamp.BackEndAPI.Controllers
             try
             {
                 //ambil last orderheaderid
-                string lastOrderHeaderId = _orderHeader.GetOrderLastHeaderId();
+                //string lastOrderHeaderId = _orderHeader.GetOrderLastHeaderId();
 
-                lastOrderHeaderId = lastOrderHeaderId.Substring(4, 4);
-                int newOrderHeaderId = Convert.ToInt32(lastOrderHeaderId) + 1;
-                string newOrderHeaderIdString = "INV-" + newOrderHeaderId.ToString().PadLeft(4, '0');
+                //lastOrderHeaderId = lastOrderHeaderId.Substring(4, 4);
+                //int newOrderHeaderId = Convert.ToInt32(lastOrderHeaderId) + 1;
+                //string newOrderHeaderIdString = "INV-" + newOrderHeaderId.ToString().PadLeft(4, '0');
 
-               
-                orderHeader.OrderHeaderId = newOrderHeaderIdString;
+
+                //orderHeader.OrderHeaderId = newOrderHeaderIdString;
 
                 var result = _orderHeader.Add(orderHeader);
                 //---tambahan kalau mau masukin juga order detail
-                foreach (var item in orderHeader.OrderDetails)
-                {
-                    item.OrderHeaderId = newOrderHeaderIdString;
-                    _orderDetail.Add(item);
-                }
+                //foreach (var item in orderHeader.OrderDetails)
+                //{
+                //    item.OrderHeaderId = newOrderHeaderIdString;
+                //    _orderDetail.Add(item);
+                //}
 
                 return Ok(result);
             }

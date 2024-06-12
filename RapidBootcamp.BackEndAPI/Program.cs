@@ -18,6 +18,7 @@ builder.Services.AddScoped<ICategory, CategoriesDAL>();
 builder.Services.AddScoped<IProduct, ProducstDAL>();
 builder.Services.AddScoped<IOrderHeader, OrderHeadersDAL>();
 builder.Services.AddScoped<IOrderDetail, OrderDetailsDAL>();
+builder.Services.AddScoped<IWallet, WalletDAL>();
 
 var app = builder.Build();
 
