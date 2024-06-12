@@ -6,5 +6,6 @@ namespace RapidBootcamp.BackEndAPI.DAL
     {
         IEnumerable<OrderDetail> GetDetailsByHeaderId(string orderHeaderId);
         decimal GetTotalAmount(string orderHeaderId);
-    }
+        //int CheckProductStock(int productId, int qty);//ini bisa buat disini,bisa juga buat di product intinya kalau masih ada bagian gitu atau masih keterkaitan
+    } 
 }

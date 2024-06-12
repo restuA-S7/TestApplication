@@ -2,6 +2,7 @@
 using RapidBootcamp.BackEndAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -90,9 +91,14 @@ namespace RapidBootcamp.BackendAPI.DAL
                 //poco object untuk menampung data dari database
                 List<Category> categories = new List<Category>();
 
-                string query = @"SELECT * FROM Categories 
-                                 order by CategoryName asc";
+                //string query = @"SELECT * FROM Categories 
+                                 ///order by CategoryName asc";
+                // kalau pake store procedur bisa gini aja
+                string query = @"sp_GetAllCategories";
                 _command = new SqlCommand(query, _connection);
+                // terus tambahin di bawah nya ini
+                _command.CommandType = CommandType.StoredProcedure;
+
 
                 //buka koneksi
                 _connection.Open();

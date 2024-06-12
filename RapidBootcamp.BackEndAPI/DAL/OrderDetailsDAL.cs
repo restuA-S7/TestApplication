@@ -8,22 +8,44 @@ namespace RapidBootcamp.BackEndAPI.DAL
     {
         private string? _connectionString;
         private readonly IConfiguration _config;
+        private readonly IProduct _product;
         private SqlConnection _connection;
         private SqlCommand _command;
         private SqlDataReader _reader;
 
-        public OrderDetailsDAL(IConfiguration config)
+        public OrderDetailsDAL(IConfiguration config, IProduct product)
         {
             _config = config;
+            _product = product;
             _connectionString = _config.GetConnectionString("DefaultConnection");
             _connection = new SqlConnection(_connectionString);
         }
         public OrderDetail Add(OrderDetail entity)
         {
-            using(TransactionScope scope = new TransactionScope())
+            using(TransactionScope scope = new TransactionScope()) //tansaction scope itu untuk memastikan dua/lebih eksekusi itu bener2 dijalankan dulu kalau engga di kembalikan
             {
+                //cara panggil ini di api order header ya sekalian dan pakainya ini
+                /*{
+                    "orderHeaderId": "",
+                    "walletId": 5,
+                    "orderDetails": [
+                        {
+                        "orderHeaderId": "",
+                        "productId": 11,
+                        "qty": 2,
+                        "price": 2000
+                        }
+                    ]
+                }*/
                 try
                 {
+                    //ambil stock masih ada engga
+                    int stock = _product.CheckProductStock(entity.ProductId);
+                    if (stock < entity.Qty)
+                    {
+                        throw new ArgumentException("Stock is not enaugh");
+                    }
+
                     string query = @"insert into OrderDetails(OrderHeaderId,ProductId,Qty,Price) 
                                  values(@OrderHeaderId,@ProductId,@Qty,@Price);
                                  select @@identity";

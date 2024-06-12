@@ -323,5 +323,28 @@ namespace PraktekSendiri.ConsoleApp.DAL
             }
         
         }
+
+        public int CheckProductStock(int productId)
+        {
+            try
+            {
+                string query = @"select Stock from Products where ProductId = @ProductId";
+                _command = new SqlCommand(query, _connection);
+                _command.Parameters.AddWithValue("ProductId", productId);
+                _connection.Open();
+                int stock = Convert.ToInt32(_command.ExecuteScalar());
+                return stock;
+            }
+            catch (SqlException sqlEx)
+            {
+
+                throw new ArgumentException(sqlEx?.Message);
+            }
+            finally
+            {
+                _command.Dispose();
+                _connection.Close();
+            }
+        }
     }
 }
