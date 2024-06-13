@@ -5,7 +5,9 @@ VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidBootcamp.WebApplication", "RapidBootcamp.WebApplication\RapidBootcamp.WebApplication.csproj", "{62BA1253-4951-4A3B-AD99-66A3DB2FDFF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidBootcamp.BackEndAPI", "RapidBootcamp.BackEndAPI\RapidBootcamp.BackEndAPI.csproj", "{93A3129C-2512-441D-98A1-EF4E4F7EDF8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RapidBootcamp.BackEndAPI", "RapidBootcamp.BackEndAPI\RapidBootcamp.BackEndAPI.csproj", "{93A3129C-2512-441D-98A1-EF4E4F7EDF8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RapidBootcamp.ReverseEf", "RapidBootcamp.ReverseEf\RapidBootcamp.ReverseEf.csproj", "{D1A78D8C-D7C4-4AB3-88CF-3353D3B3094B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{93A3129C-2512-441D-98A1-EF4E4F7EDF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93A3129C-2512-441D-98A1-EF4E4F7EDF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93A3129C-2512-441D-98A1-EF4E4F7EDF8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1A78D8C-D7C4-4AB3-88CF-3353D3B3094B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1A78D8C-D7C4-4AB3-88CF-3353D3B3094B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1A78D8C-D7C4-4AB3-88CF-3353D3B3094B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1A78D8C-D7C4-4AB3-88CF-3353D3B3094B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
