@@ -1,7 +1,11 @@
-﻿namespace RapidBootcamp.WebApplication.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RapidBootcamp.WebApplication.Models
 {
     public class Product
     {
+        [Key]
         public int ProductId { get; set; }
         public int CategoryId { get; set; }
         public string ProductName { get; set; }
