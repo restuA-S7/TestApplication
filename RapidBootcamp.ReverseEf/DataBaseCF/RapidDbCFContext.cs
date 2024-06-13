@@ -14,6 +14,8 @@ public partial class RapidDbCFContext : DbContext
     //{
     //}
 
+    //itu buat inject konstruktornya, kaalu pakai console ma gak usah pakai injcet ini kecuali apl lain sama juga di RapidDbContextnya
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Customer> Customers { get; set; }
