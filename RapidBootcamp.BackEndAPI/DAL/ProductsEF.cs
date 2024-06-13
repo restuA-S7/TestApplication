@@ -38,7 +38,12 @@ namespace RapidBootcamp.BackEndAPI.DAL
 
         public Product GetById(int id)
         {
-            throw new NotImplementedException();
+            var product = _appDbContext.Products.Include(p => p.Category).FirstOrDefault(p => p.ProductId == id);
+            if (product == null)
+            {
+                throw new Exception("product not found");
+            }
+            return product;
         }
 
         public IEnumerable<Product> GetByProductName(string productName)
@@ -55,7 +60,21 @@ namespace RapidBootcamp.BackEndAPI.DAL
 
         public Product Update(Product entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var updateProduct = GetById(entity.ProductId);
+                updateProduct.ProductName = entity.ProductName;
+                updateProduct.CategoryId = entity.CategoryId;
+                updateProduct.Stock = entity.Stock;
+                updateProduct.Price = entity.Price;
+                _appDbContext.SaveChanges();
+                return updateProduct;
+            }
+            catch (Exception ex)
+            {
+
+                throw new ArgumentException(ex.Message);
+            }
         }
     }
 }

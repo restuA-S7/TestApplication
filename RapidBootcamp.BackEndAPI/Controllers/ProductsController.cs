@@ -50,10 +50,23 @@ namespace RapidBootcamp.BackEndAPI.Controllers
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
-        public Product Get(int id)
+        public ProductDTO Get(int id)
         {
             var product = _product.GetById(id);
-            return product;
+            var productDto = new ProductDTO
+            {
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                Stock = product.Stock,
+                Price = product.Price,
+                Category = new CategoryDTO
+                {
+                    CategoryId = product.Category.CategoryId,
+                    CategoryName = product.Category.CategoryName
+                }
+            };
+
+            return productDto;
         }
 
         [HttpGet("ByCategory/{categoryId}")]  //ini customm routing ini gak boleh sama
@@ -90,7 +103,7 @@ namespace RapidBootcamp.BackEndAPI.Controllers
 
         // PUT api/<ProductsController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Product product)
+        public ActionResult Put(int id, [FromBody] UpdateProductDto updateProductDto)
         {
             var updateProduct = _product.GetById(id);
             if (updateProduct == null)
@@ -99,17 +112,28 @@ namespace RapidBootcamp.BackEndAPI.Controllers
             };
             try
             {
-                updateProduct.CategoryId = product.CategoryId;
-                updateProduct.ProductName = product.ProductName;
-                updateProduct.Stock = product.Stock;
-                updateProduct.Price = product.Price;
+                updateProduct.ProductName = updateProductDto.ProductName;
+                updateProduct.CategoryId = updateProductDto.CategoryId;
+                updateProduct.Stock = updateProductDto.Stock;
+                updateProduct.Price = updateProductDto.Price;
                 var result = _product.Update(updateProduct);
-                return Ok(result);
 
+                ProductDTO productDTO = new ProductDTO
+                {
+                    ProductId = result.ProductId,
+                    ProductName = result.ProductName,
+                    Stock = result.Stock,
+                    Price = result.Price,
+                    Category = new CategoryDTO
+                    {
+                        CategoryId = result.Category.CategoryId,
+                        CategoryName = result.Category.CategoryName
+                    }
+                };
+                return Ok(productDTO);
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex.Message);
             }
         }
