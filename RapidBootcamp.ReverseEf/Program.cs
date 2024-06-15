@@ -17,7 +17,7 @@ using System.Text;
 var db1 = new DataBase1.RapidDbContext();
 var db2 = new DataBase2.RapidDbCFContext();
 
-
+ 
 //var db1Categories = db1.Categories.ToList();
 
 //List<RapidBootcamp.ReverseEf.DataBaseCF.Category> listCategory = new List<RapidBootcamp.ReverseEf.DataBaseCF.Category>();
@@ -207,5 +207,7 @@ using (var reader = new StreamReader("C:\\Users\\NENDENPRA\\Downloads\\Categorie
         }
     }
 }
+
+
 
 
